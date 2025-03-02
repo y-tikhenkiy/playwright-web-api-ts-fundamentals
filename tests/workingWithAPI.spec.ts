@@ -56,7 +56,7 @@ test('delete article', async({page, request}) =>{
     }
   })
 
-  expect(articleResponse.status()).toEqual(201)
+  expect(articleResponse.status()).toEqual(201);
 
   await page.getByText('Global Feed').click();
   await page.getByText('This a test title').click();
@@ -64,4 +64,42 @@ test('delete article', async({page, request}) =>{
   await page.getByText('Global Feed').click();
 
   await expect(page.locator('app-article-list h1').first()).not.toContainText('This a test title');
+})
+
+test('create article', async({page, request})=>{
+  await page.getByText("New article").click();
+  await page.getByRole('textbox',{name: 'Article Title'}).fill('This is a test article');
+  await page.getByRole('textbox',{name: 'What\'s this article about?'}).fill('This is a test description');
+  await page.getByRole('textbox',{name: 'Write your article (in markdown)'}).fill('This is a test body');
+  await page.getByRole('button',{name: 'Publish Article'}).click();
+
+  const articleResponse = await page.waitForResponse('https://conduit-api.bondaracademy.com/api/articles/');
+  const articleResponseBody = await articleResponse.json();
+  console.log(articleResponseBody);
+  const slugId = articleResponseBody.article.slug;
+
+  await expect(page.locator('.article-page h1')).toContainText('This is a test article');
+  
+  await page.getByText('Home').click();
+  await page.getByText('Global Feed').click();
+
+  await expect(page.locator('app-article-list h1').first()).toContainText('This is a test article');
+
+  const response = await request.post('https://conduit-api.bondaracademy.com/api/users/login', {
+    data: {
+      "user":{"email":"pwapi@test.com","password":"123123"}
+    }
+  })
+
+  const responseBody = await response.json();
+  const accessToken = responseBody.user.token;
+
+  const deleteArticleResponse = await request.delete(`https://conduit-api.bondaracademy.com/api/articles/${slugId}`, {
+    headers:{
+      Authorization: `Token ${accessToken}`
+    }
+  })
+
+  expect(deleteArticleResponse.status()).toEqual(204);
+
 })
