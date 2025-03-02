@@ -7,14 +7,8 @@ test.beforeEach(async ({page})=>{
         body: JSON.stringify(tags)
       })
   })
-
+  
   await page.goto('https://conduit.bondaracademy.com/');
-  await page.waitForTimeout(500);
-  await page.getByText('Sign in').click();
-  await page.getByRole('textbox', {name: "Email"}).fill('pwapi@test.com');
-  await page.getByRole('textbox', {name: "Password"}).fill('123123');
-  await page.getByRole('button').click();
-
 })
 
 test('article has modified title and description', async ({ page }) => {
