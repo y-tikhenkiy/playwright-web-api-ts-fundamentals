@@ -7,7 +7,7 @@ test.beforeEach(async ({page})=>{
         body: JSON.stringify(tags)
       })
   })
-  
+
   await page.goto('https://conduit.bondaracademy.com/');
 })
 
@@ -32,22 +32,24 @@ test('article has modified title and description', async ({ page }) => {
 });
 
 test('delete article', async({page, request}) =>{
-  const response = await request.post('https://conduit-api.bondaracademy.com/api/users/login', {
-    data: {
-      "user":{"email":"pwapi@test.com","password":"123123"}
-    }
-  })
+  //commeted due to made auth from pw config
+  // const response = await request.post('https://conduit-api.bondaracademy.com/api/users/login', {
+  //   data: {
+  //     "user":{"email":"pwapi@test.com","password":"123123"}
+  //   }
+  // })
 
-  const responseBody = await response.json();
-  const accessToken = responseBody.user.token;
+  // const responseBody = await response.json();
+  // const accessToken = responseBody.user.token;
 
   const articleResponse = await request.post('https://conduit-api.bondaracademy.com/api/articles/', {
     data: {
       "article":{"title":"This a test title","description":"This is a test description","body":"This a test body","tagList":[]}
-    },
-    headers:{
-      Authorization: `Token ${accessToken}`
     }
+    //commeted due to made auth from pw config
+    // headers:{
+    //   Authorization: `Token ${accessToken}`
+    // }
   })
 
   expect(articleResponse.status()).toEqual(201);
@@ -79,20 +81,24 @@ test('create article', async({page, request})=>{
 
   await expect(page.locator('app-article-list h1').first()).toContainText('This is a test article');
 
-  const response = await request.post('https://conduit-api.bondaracademy.com/api/users/login', {
-    data: {
-      "user":{"email":"pwapi@test.com","password":"123123"}
-    }
-  })
+  //commeted due to made auth from pw config
+  // const response = await request.post('https://conduit-api.bondaracademy.com/api/users/login', {
+  //   data: {
+  //     "user":{"email":"pwapi@test.com","password":"123123"}
+  //   }
+  // })
 
-  const responseBody = await response.json();
-  const accessToken = responseBody.user.token;
+  // const responseBody = await response.json();
+  // const accessToken = responseBody.user.token;
 
-  const deleteArticleResponse = await request.delete(`https://conduit-api.bondaracademy.com/api/articles/${slugId}`, {
-    headers:{
-      Authorization: `Token ${accessToken}`
-    }
-  })
+  const deleteArticleResponse = await request.delete(`https://conduit-api.bondaracademy.com/api/articles/${slugId}` 
+  // {
+    //commeted due to made auth from pw config
+    // headers:{
+    //   Authorization: `Token ${accessToken}`
+    // }
+  // }
+  )
 
   expect(deleteArticleResponse.status()).toEqual(204);
 
